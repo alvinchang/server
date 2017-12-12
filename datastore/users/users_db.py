@@ -18,8 +18,17 @@ def init_db_connection():
 
     :return:
     """
-    conn = sqlite3.connect(USERS_DB_PATH)
-    return conn
+    try:
+        conn = sqlite3.connect(USERS_DB_PATH)
+        return conn
+    except Exception as e:
+        raise DatabaseConnectionError(e.message)
+
+
+class DatabaseConnectionError(ValueError):
+
+    def __init__(self, msg):
+        super(DatabaseConnectionError, self).__init__(msg)
 
 
 def insert_user_in_db(users):

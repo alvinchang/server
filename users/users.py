@@ -7,15 +7,17 @@ class UserJsonKeys(Enum):
     FIRST_NAME = "first_name"
     LAST_NAME = "last_name"
     EMAIL = "email"
+    ID = "id"
 
 
 class User:
 
-    def __init__(self, user_name, first_name, last_name, email):
+    def __init__(self, user_name, first_name, last_name, email, user_id=None):
         self._user_name = user_name
         self._first_name = first_name
         self._last_name = last_name
         self._email = email
+        self._user_id = user_id
 
     @classmethod
     def from_json(cls, json_):
@@ -23,12 +25,14 @@ class User:
         first_name = json_.get(UserJsonKeys.FIRST_NAME.value, None)
         last_name = json_.get(UserJsonKeys.LAST_NAME.value, None)
         email = json_.get(UserJsonKeys.EMAIL.value, None)
+        user_id = json_.get(UserJsonKeys.ID.value, None)
         if user_name is not None:
             return cls(
                 user_name=user_name,
                 first_name=first_name,
                 last_name=last_name,
-                email=email
+                email=email,
+                user_id=user_id
             )
         else:
             return cls.from_general_username(first_name, last_name)
