@@ -45,14 +45,14 @@ def get_user_in_db(username):
     with conn:
         cursor = conn.cursor()
         select_sql = """
-            SELECT * FROM USERS WHERE user_name = '?';
+            SELECT * FROM USERS WHERE user_name=?;
         """
-        cursor.execute(select_sql, username)
+        cursor.execute(select_sql, (username,))
         results = cursor.fetchall()
         if not results:
             raise DatabaseError("Could not find user_name={}".format(username))
 
-        person_row = cursor.fetchall()[0]
+        person_row = results[0]
         return User(
             user_name=person_row[1],
             first_name=person_row[2],
@@ -74,10 +74,10 @@ def get_user_id_in_db(username):
     with conn:
         cursor = conn.cursor()
         select_sql = """
-            SELECT user_id FROM USERS WHERE user_name = ?;
+            SELECT user_id FROM USERS WHERE user_name=?;
         """
-        cursor.execute(select_sql, username)
-        results = cursor.fetchall()[0]
+        cursor.execute(select_sql, (username,))
+        results = cursor.fetchall()
         if not results:
             raise DatabaseError("Could not find user_name={}".format(username))
         return results[0][0]
@@ -111,9 +111,9 @@ def delete_user_in_db(username):
     with conn:
         cursor = conn.cursor()
         delete_sql = """
-            DELETE FROM USERS WHERE user_name = ?;
+            DELETE FROM USERS WHERE user_name=?;
         """
-        cursor.execute(delete_sql, username)
+        cursor.execute(delete_sql, (username,))
 
 
 def insert_user_in_db(users):

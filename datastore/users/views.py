@@ -38,40 +38,34 @@ def add_user():
     return JsonSuccessResponse(HttpStatusCode.RESOURCE_CREATED, "users created successfully").to_response
 
 
-@users_blueprint.route("/get_user/<string: username>", methods=["GET"])
-def get_user():
-    user_name = request.args.get('username', None)
+@users_blueprint.route("/get_user/<string:username>", methods=["GET"])
+def get_user(username):
+    # user_name = request.args.get('username', None)
 
     try:
-        user = get_user_in_db(user_name)
-        return jsonify({
-            UserJsonKeys.USER_NAME.VALUE: user.user_name
-
-        }), HttpStatusCode.OK.value
+        user = get_user_in_db(username)
+        return jsonify(user.to_json()), HttpStatusCode.OK.value
     except DatabaseError as e:
         return JsonErrorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e).to_response
     except Exception as e:
         return JsonErrorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e).to_response
 
 
-@users_blueprint.route("/update_user/<string: username>/<string: new_email>", methods=["PUT"])
-def update_user():
-    user_name = request.args.get('username', None)
-    new_email = request.args.get('new_email', None)
+@users_blueprint.route("/update_user/<string:username>/<string:new_email>", methods=["PUT"])
+def update_user(username, new_email):
     try:
-        modify_user_email_in_db(user_name, new_email)
-        return JsonSuccessResponse(HttpStatusCode.RESOURCE_CREATED, "users updated successfully").to_response
+        modify_user_email_in_db(username, new_email)
+        return JsonSuccessResponse(HttpStatusCode.OK, "users updated successfully").to_response
     except DatabaseError as e:
         return JsonErrorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e).to_response
     except Exception as e:
         return JsonErrorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e).to_response
 
 
-@users_blueprint.route("/delete/<string: username>", methods=["DEL"])
-def delete_user():
-    user_name = request.args.get('username', None)
+@users_blueprint.route("/delete_user/<string:username>", methods=["DELETE"])
+def delete_user(username):
     try:
-        delete_user_in_db(user_name)
+        delete_user_in_db(username)
         return JsonSuccessResponse(HttpStatusCode.OK, "users deleted successfully").to_response
     except DatabaseError as e:
         return JsonErrorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e).to_response
