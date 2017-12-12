@@ -15,7 +15,7 @@ class JsonError(ValueError):
         super(JsonError, self).__init__(msg)
 
 
-class JsonResponse:
+class JsonSuccessResponse:
 
     _MSG_JSON_KEY = "msg"
 

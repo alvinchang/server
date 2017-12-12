@@ -1,6 +1,8 @@
 import os
 import sqlite3
 
+from users.users import User
+
 USERS_DB = "users.sqlite3"
 
 USERS_DB_PATH = os.path.dirname(__file__) + "/" + USERS_DB
@@ -29,6 +31,89 @@ class DatabaseConnectionError(ValueError):
 
     def __init__(self, msg):
         super(DatabaseConnectionError, self).__init__(msg)
+
+
+def get_user_in_db(username):
+    """
+    Gets a user row based on the username (which should be unique)
+
+    :param username:
+    :type username: str
+    :rtype: User
+    """
+    conn = init_db_connection()
+    with conn:
+        cursor = conn.cursor()
+        select_sql = """
+            SELECT * FROM USERS WHERE user_name = '?';
+        """
+        cursor.execute(select_sql, username)
+        results = cursor.fetchall()
+        if not results:
+            raise DatabaseError("Could not find user_name={}".format(username))
+
+        person_row = cursor.fetchall()[0]
+        return User(
+            user_name=person_row[1],
+            first_name=person_row[2],
+            last_name=person_row[3],
+            email=person_row[4],
+            user_id=person_row[0]
+        )
+
+
+def get_user_id_in_db(username):
+    """
+    Gets a user id based on the username (which should be unique)
+
+    :param username:
+    :type username: str
+    :rtype: str
+    """
+    conn = init_db_connection()
+    with conn:
+        cursor = conn.cursor()
+        select_sql = """
+            SELECT user_id FROM USERS WHERE user_name = ?;
+        """
+        cursor.execute(select_sql, username)
+        results = cursor.fetchall()[0]
+        if not results:
+            raise DatabaseError("Could not find user_name={}".format(username))
+        return results[0][0]
+
+
+def modify_user_email_in_db(username, new_user_email):
+    """
+    Modifies a user in the database.
+
+    :param username:
+    :type username: str
+    """
+    user_id = get_user_id_in_db(username)
+    conn = init_db_connection()
+    with conn:
+        cursor = conn.cursor()
+        select_sql = """
+               UPDATE USERS SET email=? where user_id=?;
+           """
+        cursor.execute(select_sql, (new_user_email, user_id))
+
+
+def delete_user_in_db(username):
+    """
+    Deletes a user in the database.
+
+    :param username:
+    :type username: str
+    """
+    conn = init_db_connection()
+    with conn:
+        cursor = conn.cursor()
+        delete_sql = """
+            DELETE FROM USERS WHERE user_name = ?;
+        """
+        cursor.execute(delete_sql, username)
 
 
 def insert_user_in_db(users):

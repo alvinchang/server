@@ -37,6 +37,14 @@ class User:
         else:
             return cls.from_general_username(first_name, last_name)
 
+    def to_json(self):
+        return {
+            UserJsonKeys.USER_NAME.value: self._user_name,
+            UserJsonKeys.FIRST_NAME.value: self._first_name,
+            UserJsonKeys.LAST_NAME.value: self._last_name,
+            UserJsonKeys.EMAIL.value: self._email
+        }
+
     @classmethod
     def from_general_username(cls, first_name, last_name):
         return cls(
