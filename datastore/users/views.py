@@ -68,7 +68,7 @@ def update_user():
 
 
 @users_blueprint.route("/delete/<string: username>", methods=["DEL"])
-def update_user():
+def delete_user():
     user_name = request.args.get('username', None)
     try:
         delete_user_in_db(user_name)
